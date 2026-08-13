@@ -97,7 +97,8 @@ async function main() {
     if (error) throw error;
     branch = newBranch;
   }
-  const branchId = branch.id;
+  if (!branch) throw new Error('Failed to create or find the Kochi branch');
+    const branchId = branch.id;
 
   await admin.from('branch_payment_settings').upsert({
     branch_id: branchId,
@@ -148,7 +149,8 @@ async function main() {
     if (error) throw error;
     professional = data;
   }
-  const professionalId = professional.id;
+  if (!professional) throw new Error('Failed to create or find the Arjun professional profile');
+    const professionalId = professional.id;
 
   await admin
     .from('professional_employments')
@@ -250,7 +252,8 @@ async function upsertRole(businessId: string, name: string, permissionCodes: str
     if (error) throw error;
     role = data;
   }
-  for (const code of permissionCodes) {
+  if (!role) throw new Error(`Failed to create or find role "${name}"`);
+    for (const code of permissionCodes) {
     await admin.from('role_permissions').upsert({ role_id: role.id, permission_code: code });
   }
   return role.id as string;
@@ -272,7 +275,8 @@ async function upsertMembership(businessId: string, userId: string, allBranches:
     if (error) throw error;
     membership = data;
   }
-  for (const roleId of roleIds) {
+  if (!membership) throw new Error('Failed to create or find business membership');
+    for (const roleId of roleIds) {
     await admin.from('membership_roles').upsert({ membership_id: membership.id, role_id: roleId });
   }
   return membership.id as string;
